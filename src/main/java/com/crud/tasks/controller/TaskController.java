@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -23,15 +24,14 @@ public class TaskController {
     @Autowired
     private TaskMapper taskMapper;
 
+    @RequestMapping(method = RequestMethod.GET, value = "getTaskById")
+    public TaskDto getTaskById(long taskId){
+        return taskMapper.mapToTaskDto(service.getSingleTask(taskId));
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "getTasks")
     public List<TaskDto> getTasks(){
         return taskMapper.mapToTaskDtoList(service.getAllTasks());
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "getSingleTask")
-    public TaskDto getSingleTask(long taskId){
-        return taskMapper.mapToTaskDto(service.getSingleTask(taskId));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "getTask")
