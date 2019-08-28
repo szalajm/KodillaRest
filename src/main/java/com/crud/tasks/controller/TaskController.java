@@ -39,8 +39,8 @@ public class TaskController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "deleteTask")
-    public void deleteTask(long taskId){
-        service.deleteTask(taskId);
+    public void deleteTask(long id){
+        service.deleteTask(id);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "createTask", consumes = APPLICATION_JSON_VALUE)
