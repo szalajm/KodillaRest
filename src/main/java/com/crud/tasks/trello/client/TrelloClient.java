@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class TrelloClient {
@@ -39,13 +40,14 @@ public class TrelloClient {
                 .queryParam("fields", "name,id").build().encode().toUri();
     }
 
-    public List<TrelloBoardDto> getTrelloBoards() {
+    public Optional<List<TrelloBoardDto>> getTrelloBoards() throws BoardNotFoundException {
 
         TrelloBoardDto[] boardResponse = restTemplate.getForObject(uriBuilder(), TrelloBoardDto[].class);
 
-        if(boardResponse != null){
-            return Arrays.asList(boardResponse);
-        }
-        return new ArrayList<>();
+        return Optional.ofNullable(Arrays.asList(boardResponse));
     }
+
+
+
+
 }
