@@ -33,21 +33,29 @@ public class TrelloClient {
     private RestTemplate restTemplate;
 
 
-    private URI uriBuilder(){
-        return UriComponentsBuilder.fromHttpUrl(trelloApiEndpoint + "members/" + trelloUsername +"/boards")
+    //private URI uriBuilder(){
+        //return UriComponentsBuilder.fromHttpUrl(trelloApiEndpoint + "members/" + trelloUsername +"/boards")
+          //      .queryParam("key", trelloAppKey)
+            //    .queryParam("token", trelloToken)
+              //  .queryParam("fields", "name,id").build().encode().toUri();
+    //}
+
+    public List<TrelloBoardDto> getTrelloBoards() {
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(trelloApiEndpoint + "members/" + trelloUsername + "/boards")
                 .queryParam("key", trelloAppKey)
                 .queryParam("token", trelloToken)
-                .queryParam("fields", "name,id").build().encode().toUri();
+                .queryParam("fields", "name,id")
+                .queryParam("Lists", "all").build().encode().toUri();
+
+        TrelloBoardDto[] boardResponse = restTemplate.getForObject(uri, TrelloBoardDto[].class);
+
+        System.out.println(uri);
+        System.out.println(boardResponse);
+
+        if (boardResponse != null) {
+            return Arrays.asList(boardResponse);
+        }
+        return new ArrayList<>();
     }
-
-    public Optional<List<TrelloBoardDto>> getTrelloBoards() throws BoardNotFoundException {
-
-        TrelloBoardDto[] boardResponse = restTemplate.getForObject(uriBuilder(), TrelloBoardDto[].class);
-
-        return Optional.ofNullable(Arrays.asList(boardResponse));
-    }
-
-
-
-
 }
