@@ -1,6 +1,8 @@
 package com.crud.tasks.trello.client;
 
+import com.crud.tasks.domain.CreatedTrelloCard;
 import com.crud.tasks.domain.TrelloBoardDto;
+import com.crud.tasks.domain.TrelloCardDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class TrelloClient {
@@ -46,16 +49,37 @@ public class TrelloClient {
                 .queryParam("key", trelloAppKey)
                 .queryParam("token", trelloToken)
                 .queryParam("fields", "name,id")
-                .queryParam("Lists", "all").build().encode().toUri();
+                .queryParam("lists", "all").build().encode().toUri();
 
         TrelloBoardDto[] boardResponse = restTemplate.getForObject(uri, TrelloBoardDto[].class);
 
         System.out.println(uri);
         System.out.println(boardResponse);
 
-        if (boardResponse != null) {
-            return Arrays.asList(boardResponse);
-        }
-        return new ArrayList<>();
+        List<TrelloBoardDto> boardResponseList = Arrays.asList(boardResponse);
+        List<Optional<TrelloBoardDto>>  optionalList =
+                 boardResponseList.stream()
+                .map(Optional::ofNullable)
+                .collect(Collectors.toList());
+
+        return Arrays.asList(Optional.ofNullable(boardResponse).orElse(new TrelloBoardDto[0]));
+        //if (boardResponse != null) {
+          //  return Arrays.asList(boardResponse);
+        //}
+        //return new ArrayList<>();
+    }
+
+    public CreatedTrelloCard createNewCard(TrelloCardDto trelloCardDto){
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(trelloApiEndpoint + "cards")
+                .queryParam("key", trelloAppKey)
+                .queryParam("token", trelloToken)
+                .queryParam("name", trelloCardDto.getName())
+                .queryParam("desc", trelloCardDto.getDescription())
+                .queryParam("pos", trelloCardDto.getPos())
+                .queryParam("idList", trelloCardDto.getListsId()).build().encode().toUri();
+
+        System.out.println(uri);
+        return restTemplate.postForObject(uri, null, CreatedTrelloCard.class);
     }
 }
