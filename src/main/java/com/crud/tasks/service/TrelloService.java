@@ -25,7 +25,7 @@ public class TrelloService {
     @Autowired
     SimpleEmailService emailService;
 
-    private static String SUBJECT = "Tasks: New Trello Card";
+    private static final String SUBJECT = "Tasks: New Trello Card";
 
     public List<TrelloBoardDto>  fetchTrelloBoards (){
         return trelloClient.getTrelloBoards();
