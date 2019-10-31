@@ -13,7 +13,7 @@ import java.util.List;
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/v1/trello")
-public class TrelloControler {
+public class TrelloController {
     @Autowired
     private TrelloService trelloService;
 
