@@ -1,4 +1,4 @@
-package com.crud.tasks.controller;
+/**package com.crud.tasks.controller;
 
 import com.crud.tasks.domain.Task;
 import com.crud.tasks.domain.TaskDto;
@@ -92,3 +92,4 @@ public class TaskControllerTestSuite {
         Assert.assertEquals(0, taskRepository.count());
     }
 }
+*/

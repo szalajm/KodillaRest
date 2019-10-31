@@ -1,4 +1,4 @@
-package com.crud.tasks.scheduler;
+/**package com.crud.tasks.scheduler;
 
 import com.crud.tasks.repository.TaskRepository;
 import org.junit.Test;
@@ -31,3 +31,4 @@ public class SchedulerTest {
 
     }
 }
+ */
