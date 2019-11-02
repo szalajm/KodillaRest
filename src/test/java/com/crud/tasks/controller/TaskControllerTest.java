@@ -1,14 +1,17 @@
-/**package com.crud.tasks.controller;
+package com.crud.tasks.controller;
 
 import com.crud.tasks.domain.Task;
 import com.crud.tasks.domain.TaskDto;
 import com.crud.tasks.mapper.TaskMapper;
+import com.crud.tasks.repository.TaskRepository;
 import com.crud.tasks.service.DbService;
 import com.crud.tasks.service.TrelloService;
 import com.crud.tasks.trello.fasade.TrelloFacade;
 import com.google.gson.Gson;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,12 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,8 +39,11 @@ public class TaskControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private TaskController taskController;
+
+    @MockBean
+    private TaskRepository taskRepository;
 
     @MockBean
     private TrelloFacade trelloFacade;
@@ -52,7 +59,7 @@ public class TaskControllerTest {
 
 
     @Test
-    public void shouldFetchEmptyTaskList() throws Exception{
+    public void shouldFetchEmptyTaskList() throws Exception {
         //Given
         List<TaskDto> taskDtoList = new ArrayList<>();
 
@@ -67,45 +74,59 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void shouldFetchSelectedTask() throws Exception{
+    public void shouldFetchSelectedTask() throws Exception {
         //Given
         TaskDto selectedTask = new TaskDto(10L, "Selected Task", "test");
+        taskRepository.save(taskMapper.mapToTask(selectedTask));
 
-        when(taskMapper.mapToTaskDto(dbService.getTask(10L).orElseThrow(TaskNotFoundException::new)))
-                .thenReturn(selectedTask);
+        when(taskMapper.mapToTaskDto(dbService.getTask(10L).orElseThrow(TaskNotFoundException::new))).
+                thenReturn(selectedTask);
 
         //When&Then
-        mockMvc.perform(get("/v1/task/getTasks").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/v1/task/getTask").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(10L)))
-                .andExpect(jsonPath("$.title", is("Selected Task")))
-                .andExpect(jsonPath("$.content", is("test"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].title", is("Selected Task")))
+                .andExpect(jsonPath("$[0].content", is("test"))
                 );
     }
 
-    /**@Test
-    public void shouldUpdateTask() throws Exception{
+    @Test
+    public void shouldDeleteTask(){
         //Given
-        TaskDto taskDto = new TaskDto(15L, "Test Task", "test");
+        Task task = new Task (25, "test task", "to be deleted");
 
-        when(taskMapper.mapToTaskDto(dbService.saveTask(taskMapper.mapToTask(any(TaskDto.class)))))
-                .thenReturn(taskDto);
+        //When
+        taskController.deleteTask(25L);
 
-        Gson gson = new Gson();
-        String jsonContent = gson.toJson(taskDto);
+        //Then
+        verify(dbService, times(1)).deleteTask(25L);
+    }
 
-        //When&Then
+    @Test
+    public void shouldCreateTask(){
+        //Given
+        TaskDto taskDto = new TaskDto(70, "test task dto", "create task");
 
-        mockMvc.perform(put("/v1/task/updateTask")
-                .contentType(MediaType.APPLICATION_JSON)
-                //.accept(MediaType.APPLICATION_JSON)
-                //.characterEncoding("UTF-8")
-                .content(jsonContent)
+        //When
+        taskController.createTask(taskDto);
 
-
+        //Then
+        verify(dbService,times(1)).saveTask(taskMapper.mapToTask(taskDto));
 
     }
 
+    @Test
+    public void shouldUpdateTask(){
+        //Given
+        TaskDto taskDto = new TaskDto(70, "test task dto", "create task");
 
-*/
+        //When
+        taskController.updateTask(taskDto);
+
+        //Then
+        verify(taskMapper, times(1))
+                .mapToTaskDto(dbService.saveTask(taskMapper.mapToTask(taskDto)));
+    }
+}
 

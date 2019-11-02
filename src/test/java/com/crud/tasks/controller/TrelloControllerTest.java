@@ -114,8 +114,4 @@ public class TrelloControllerTest {
                 );
     }
 
-    @Test
-    public void shouldDeleteTask(){
-
-    }
 }

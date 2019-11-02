@@ -1,4 +1,4 @@
-/**package com.crud.tasks.service;
+package com.crud.tasks.service;
 
 import com.crud.tasks.domain.Task;
 import com.crud.tasks.repository.TaskRepository;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DbServiceTestSuite {
@@ -57,15 +57,15 @@ public class DbServiceTestSuite {
     }
 
     @Test
-    public void shouldCreateTask(){
+    public void shouldSaveTask(){
         //Given
-        Task singleTask = new Task(20, "singleTask", "test task");
+        Task task = new Task(20, "create task", "test task");
 
         //When
-        dbService.saveTask(singleTask);
+        dbService.saveTask(task);
 
         //Then
-        Assert.assertEquals(1, taskRepository.count());
+        verify(taskRepository, times(1)).save(task);
 
     }
 
@@ -85,4 +85,3 @@ public class DbServiceTestSuite {
 
     }
 
-*/

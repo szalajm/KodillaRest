@@ -24,11 +24,6 @@ public class TaskController {
     @Autowired
     private TaskMapper taskMapper;
 
-    @RequestMapping(method = RequestMethod.GET, value = "getTaskById")
-    public TaskDto getTaskById(long taskId){
-        return taskMapper.mapToTaskDto(service.getSingleTask(taskId));
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "getTasks")
     public List<TaskDto> getTasks(){
         return taskMapper.mapToTaskDtoList(service.getAllTasks());
