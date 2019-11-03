@@ -80,19 +80,17 @@ public class TaskControllerTest {
         TaskDto mappedTask = new TaskDto(10L, "Selected Task", "test");
 
 
-        when(dbService.getTask(any()).orElseThrow(TaskNotFoundException::new)).
-                thenReturn(task);
+        when(dbService.getTask(any())).thenReturn(Optional.of(task));
         when(taskMapper.mapToTaskDto(task)).
                 thenReturn(mappedTask);
 
 
         mockMvc.perform(get("/v1/task/getTask")
-                .param("taskId", "10L")
+                .param("taskId", "10")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].title", is("Selected Task")))
-                .andExpect(jsonPath("$[0].content", is("test"))
+                .andExpect(jsonPath("title", is("Selected Task")))
+                .andExpect(jsonPath("content", is("test"))
                 );
     }
 
