@@ -76,11 +76,11 @@ public class TaskControllerTest {
     @Test
     public void shouldFetchSelectedTask() throws Exception {
         //Given
-        TaskDto selectedTask = new TaskDto(10L, "Selected Task", "test");
-        taskRepository.save(taskMapper.mapToTask(selectedTask));
+        TaskDto taskDto = new TaskDto(10L, "Selected Task", "test");
+
 
         when(taskMapper.mapToTaskDto(dbService.getTask(10L).orElseThrow(TaskNotFoundException::new))).
-                thenReturn(selectedTask);
+                thenReturn(taskDto);
 
         //When&Then
         mockMvc.perform(get("/v1/task/getTask").contentType(MediaType.APPLICATION_JSON))
