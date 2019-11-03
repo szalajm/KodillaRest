@@ -76,20 +76,26 @@ public class TaskControllerTest {
     @Test
     public void shouldFetchSelectedTask() throws Exception {
         //Given
-        TaskDto taskDto = new TaskDto(10L, "Selected Task", "test");
+        Task task = new Task(10L, "Selected Task", "test");
+        TaskDto mappedTask = new TaskDto(10L, "Selected Task", "test");
 
 
-        when(taskMapper.mapToTaskDto(dbService.getTask(10L).orElseThrow(TaskNotFoundException::new))).
-                thenReturn(taskDto);
+        when(dbService.getTask(any()).orElseThrow(TaskNotFoundException::new)).
+                thenReturn(task);
+        when(taskMapper.mapToTaskDto(task)).
+                thenReturn(mappedTask);
 
-        //When&Then
-        mockMvc.perform(get("/v1/task/getTask").contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(get("/v1/task/getTask")
+                .param("taskId", "10L")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].title", is("Selected Task")))
                 .andExpect(jsonPath("$[0].content", is("test"))
                 );
     }
+
 
     @Test
     public void shouldDeleteTask(){
@@ -129,4 +135,5 @@ public class TaskControllerTest {
                 .mapToTaskDto(dbService.saveTask(taskMapper.mapToTask(taskDto)));
     }
 }
+
 
