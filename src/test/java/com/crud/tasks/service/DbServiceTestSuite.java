@@ -53,7 +53,7 @@ public class DbServiceTestSuite {
         Optional<Task> task = dbService.getTask(3L);
 
         //Then
-        Assert.assertEquals(null, task);
+        Assert.assertNull(task);
     }
 
     @Test
