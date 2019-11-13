@@ -5,14 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
-import javax.mail.internet.MimeMessage;
+
 
 @Service
 public class SimpleEmailService {
@@ -28,31 +26,14 @@ public class SimpleEmailService {
     public void send(final Mail mail) {
         LOGGER.info("Starting email preperation....");
         try {
-            SimpleMailMessage mailMessage = createMailMessage(mail);
-            javaMailSender.send(mailMessage);
+            javaMailSender.send(createMimeMessage(mail));
             LOGGER.info("Email has beeb sent");
         } catch (MailException e) {
             LOGGER.error("Failed tpo process email sending:", e.getMessage(), e);
         }
-    }
 
-    /**private SimpleMailMessage createMailMessage (final Mail mail){
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(mail.getMailTo());
-        if(mail.getToCc() != null) {
-            mailMessage.setCc(mail.getToCc());
-        }
-        mailMessage.setSubject(mail.getSubject());
-        mailMessage.setText(mail.getMessage());
-        return mailMessage;
+        System.out.println("Wysyłam maila");
     }
-     }
-     }
-     }
-     }
-     }
-     }
-     */
 
     private MimeMessagePreparator createMimeMessage(final Mail mail){
         return mimeMessage -> {
@@ -61,13 +42,5 @@ public class SimpleEmailService {
             messageHelper.setSubject(mail.getSubject());
             messageHelper.setText(mailCreatorService.buildTrelloCardEmail(mail.getMessage()), true);
         };
-    }
-
-    private SimpleMailMessage createMailMessage (final Mail mail){
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(mail.getMailTo());
-        mailMessage.setSubject(mail.getSubject());
-        mailMessage.setText(mailCreatorService.buildTrelloCardEmail(mail.getMessage()));
-        return mailMessage;
     }
 }

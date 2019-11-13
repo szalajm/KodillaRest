@@ -39,7 +39,7 @@ public class TrelloService {
                 SUBJECT,
                 "New card: " + trelloCardDto.getName() + " has been created on your Trello account")
         ));
-
+        System.out.println(newCard);
         return newCard;
     }
 }

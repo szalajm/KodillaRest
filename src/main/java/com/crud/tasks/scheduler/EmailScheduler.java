@@ -3,8 +3,13 @@ package com.crud.tasks.scheduler;
 import com.crud.tasks.config.AdminConfig;
 import com.crud.tasks.domain.Mail;
 import com.crud.tasks.repository.TaskRepository;
+import com.crud.tasks.service.EmailSchedulerCreatorService;
+import com.crud.tasks.service.MailCreatorService;
 import com.crud.tasks.service.SimpleEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Scheduled;
 
 public class EmailScheduler {
@@ -13,7 +18,13 @@ public class EmailScheduler {
     private SimpleEmailService simpleEmailService;
 
     @Autowired
+    private JavaMailSender javaMailSender;
+
+    @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private EmailSchedulerCreatorService emailSchedulerCreatorService;
 
     @Autowired
     private AdminConfig adminConfig;
@@ -22,24 +33,32 @@ public class EmailScheduler {
 
     //@Scheduled(cron = "0 0 10 * * *
     @Scheduled(fixedDelay = 10000)
-    public void sendInformationEmail(){
+    public void sendInformationEmail() {
         long size = taskRepository.count();
 
-        if(size != 1) {
-            simpleEmailService.send(new Mail(
+        if (size != 1) {
+            javaMailSender.send(createMimeMessage(new Mail(
                     adminConfig.getAdminMail(),
                     null,
                     SUBJECT,
                     "Currently in database you have: " + size + " tasks"
-            ));
+            )));
         } else {
-            simpleEmailService.send(new Mail(
+            javaMailSender.send(createMimeMessage(new Mail(
                     adminConfig.getAdminMail(),
                     null,
                     SUBJECT,
                     "Currently in database you have: one task"
-
-            ));
+            )));
         }
+    }
+
+    private MimeMessagePreparator createMimeMessage(final Mail mail) {
+        return mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+            messageHelper.setTo(mail.getMailTo());
+            messageHelper.setSubject(mail.getSubject());
+            messageHelper.setText(emailSchedulerCreatorService.buildSchedulerMail(mail.getMessage()), true);
+        };
     }
 }
