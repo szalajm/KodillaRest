@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verify;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import static org.junit.Assert.*;
 
@@ -21,6 +23,18 @@ public class SimpleEmailServiceTest {
 
     @Mock
     JavaMailSender javaMailSender;
+
+    @Mock
+    private MailCreatorService mailCreatorService;
+
+    private MimeMessagePreparator createMimeMessage(final Mail mail) {
+        return mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+            messageHelper.setTo(mail.getMailTo());
+            messageHelper.setSubject(mail.getSubject());
+            messageHelper.setText(mailCreatorService.buildTrelloCardEmail(mail.getMessage()), true);
+        };
+    }
 
     @Test
     public void shouldSendEmail(){
@@ -36,6 +50,6 @@ public class SimpleEmailServiceTest {
         simpleEmailService.send(mail);
 
         //Then
-        verify(javaMailSender,times(1)).send(mailMessage);
+        verify(javaMailSender,times(1)).send(createMimeMessage(mail));
     }
 }

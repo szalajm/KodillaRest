@@ -75,8 +75,8 @@ public class TaskControllerTest {
                 thenReturn(mappedTask);
 
 
-        mockMvc.perform(get("/v1/tasks")
-                .param("taskId", "10")
+        mockMvc.perform(get("/v1/tasks/10")
+                //.param("taskId", "10")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("title", is("Selected Task")))
@@ -92,8 +92,8 @@ public class TaskControllerTest {
 
         //When&Then
 
-        mockMvc.perform(delete("/v1/tasks")
-                .param("taskId", "25")
+        mockMvc.perform(delete("/v1/tasks/25")
+                //.param("taskId", "25")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 

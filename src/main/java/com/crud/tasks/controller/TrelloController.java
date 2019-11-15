@@ -21,29 +21,10 @@ public class TrelloController {
     @RequestMapping(method = RequestMethod.GET, value = "/boards")
     public List<TrelloBoardDto> getTrelloBoards() {
         return trelloFacade.fetchTrelloBoard();
-
-
-        ///trelloBoards.stream()
-           //     .filter(trelloBoardDto -> trelloBoardDto.getId() != null && trelloBoardDto.getName() != null && trelloBoardDto.getName().contains("kodilla"))
-             //   .forEach(trelloBoardDto -> System.out.println(trelloBoardDto.getId() + " " + trelloBoardDto.getName()));
-
-
-        //trelloBoards.forEach(trelloBoardDto -> {
-
-          //  System.out.println(trelloBoardDto.getName() + " - " + trelloBoardDto.getId());
-
-           // System.out.println("This board contains lists: ");
-
-            //trelloBoardDto.getLists().forEach(trelloList ->
-              //      System.out.println(trelloList.getName() + " - " + trelloList.getId() + " - " + trelloList.isClosed()));
-
-        //});
-        //return trelloService.fetchTrelloBoards();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/cards")
     public CreatedTrelloCardDto createTrelloCard(@RequestBody TrelloCardDto trelloCardDto){
         return trelloFacade.createCard(trelloCardDto);
-        // return trelloService.createTrelloCard(trelloCardDto);
     }
 }
