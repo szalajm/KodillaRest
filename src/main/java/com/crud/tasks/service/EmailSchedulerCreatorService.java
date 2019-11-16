@@ -5,9 +5,11 @@ import com.crud.tasks.config.CompanyConfig;
 import com.crud.tasks.scheduler.EmailScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+@Component
 public class EmailSchedulerCreatorService {
 
     @Autowired
